@@ -151,7 +151,7 @@
           <ul class="dropdown-menu dropdown-menu-end app-casaos-menu">
             <li><a class="dropdown-item text-danger" href="javascript:void(0);" onclick="removeImage('{{ img.id }}', this)"><i class="bi bi-trash me-2"></i> {{ _('删除') }}</a></li>
           </ul>
-          <i class="bi {{ app_icon }} display-3 mb-2 text-info" data-bs-toggle="tooltip" data-bs-placement="top" title="{{ img.tags[0] if img.tags else '-' }}"></i>
+          <i class="bi {{ app_icon }} display-3 mb-2 text-info" data-bs-toggle="tooltip" data-bs-placement="top" title="{% if img.short_desc_zh %}{{ img.short_desc_zh }}{% else %}{{ img.tags[0] if img.tags else '-' }}{% endif %}"></i>
           <h5 class="card-title mb-1">{{ img.tags[0] if img.tags else '-' }}</h5>
         </div>
       </div>
