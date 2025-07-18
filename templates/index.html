@@ -113,7 +113,7 @@
           <i class="bi {{ app_icon }} display-3 mb-2 text-info"
              data-bs-toggle="tooltip"
              data-bs-placement="top"
-             title="{{ c.name }}"
+             title="{% if c.short_desc_zh %}{{ c.short_desc_zh }}{% else %}{{ c.name }}{% endif %}"
              style="cursor:pointer;"
              onclick="openAppWeb('{{ c.web_url }}')"></i>
           <h5 class="card-title mb-1">{{ c.name }}</h5>
