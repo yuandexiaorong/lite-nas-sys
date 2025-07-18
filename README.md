@@ -63,7 +63,7 @@
 
 1. **克隆项目**
 ```bash
-git clone https://github.com/your-username/dockerManager.git
+git clone git@github.com:yuandexiaorong/lite-nas-sys.git
 cd dockerManager
 ```
 
@@ -200,7 +200,7 @@ dockerManager/
 
 ## 📄 版权信息
 
-© 2025 梁宏伟 (lianghongwei). 保留所有权利。
+© 2025 梁宏伟 <lianghongwei>. 保留所有权利。
 
 联系方式: 邮箱 287066024@qq.com
 
@@ -229,9 +229,9 @@ dockerManager/
 
 ## 📞 联系方式
 
-- 项目主页: [GitHub](https://github.com/your-username/dockerManager)
-- 问题反馈: [Issues](https://github.com/your-username/dockerManager/issues)
-- 邮箱: your-email@example.com
+- 项目主页: [GitHub](https://github.com/yuandexiaorong/lite-nas-sys)
+- 问题反馈: [Issues](https://github.com/yuandexiaorong/lite-nas-sys/issues)
+- 邮箱: 287066024@qq.com
 
 ---
 

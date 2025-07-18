@@ -7,7 +7,7 @@
 ### 📋 贡献类型
 
 #### 🐛 问题报告 (Bug Reports)
-- 使用 [GitHub Issues](https://github.com/your-username/dockerManager/issues) 报告问题
+- 使用 [GitHub Issues](https://github.com/yuandexiaorong/lite-nas-sys/issues) 报告问题
 - 提供详细的问题描述和复现步骤
 - 包含系统环境信息（操作系统、Python版本、Docker版本等）
 - 附上错误日志和截图（如适用）
@@ -46,8 +46,8 @@
 ### 环境准备
 ```bash
 # 1. Fork 并克隆项目
-git clone https://github.com/your-username/dockerManager.git
-cd dockerManager
+git clone git@github.com:yuandexiaorong/lite-nas-sys.git
+cd lite-nas-sys
 
 # 2. 创建虚拟环境
 python -m venv venv
@@ -275,4 +275,4 @@ def test_user_registration_success(client):
 
 ---
 
-**注意**: 通过提交 Pull Request，您同意您的贡献将在 MIT 许可证下发布。 
+**注意**: 通过提交 Pull Request，您同意您的贡献将在 MIT 许可证下发布。

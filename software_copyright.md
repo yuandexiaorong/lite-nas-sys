@@ -21,7 +21,7 @@ V1.0.0
 2025-01-16
 
 ### 软件著作权人
-梁宏伟 (lianghongwei)
+梁宏伟 <lianghongwei>
 
 ### 联系方式
 邮箱: 287066024@qq.com
@@ -129,7 +129,7 @@ V1.0.0
 - 内存: 至少512MB可用内存
 
 ### 安装步骤
-1. 克隆项目: `git clone https://github.com/your-username/dockerManager.git && cd dockerManager`
+1. 克隆项目: `git clone git@github.com:yuandexiaorong/lite-nas-sys.git && cd lite-nas-sys`
 2. 安装依赖: `pip install -r requirements.txt`
 3. 启动应用: `python app.py`
 4. 访问系统: 打开浏览器访问 `http://localhost:5000`
@@ -210,5 +210,5 @@ volumes:
 
 ---
 
-**文档生成日期**: 2025-07-16
+**文档生成日期**: 2025-07-18
 **文档版本**: V1.0.0
