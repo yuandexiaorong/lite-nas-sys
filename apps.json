@@ -1,6 +1,7 @@
 [
   {
     "name": "Jellyfin",
+    "short_desc_zh": "杰利芬媒体",
     "image": "jellyfin/jellyfin:latest",
     "icon": "bi-film",
     "description": "开源媒体服务器，支持多平台媒体管理和流媒体播放。",
@@ -12,6 +13,7 @@
   },
   {
     "name": "Nextcloud",
+    "short_desc_zh": "下一代云盘",
     "image": "nextcloud:latest",
     "icon": "bi-cloud",
     "description": "私有云盘，支持文件同步、共享和协作。",
@@ -23,6 +25,7 @@
   },
   {
     "name": "Plex",
+    "short_desc_zh": "普雷克斯媒体",
     "image": "plexinc/pms-docker:latest",
     "icon": "bi-film",
     "description": "Plex 媒体服务器，支持多终端流媒体播放。",
@@ -34,6 +37,7 @@
   },
   {
     "name": "Transmission",
+    "short_desc_zh": "传输下载器",
     "image": "linuxserver/transmission:latest",
     "icon": "bi-download",
     "description": "BT/PT 下载工具，支持Web管理。",
@@ -45,6 +49,7 @@
   },
   {
     "name": "qBittorrent",
+    "short_desc_zh": "比特洪流",
     "image": "linuxserver/qbittorrent:latest",
     "icon": "bi-download",
     "description": "qBittorrent 下载器，支持Web管理和多种协议。",
@@ -100,6 +105,7 @@
   },
   {
     "name": "Code-Server",
+    "short_desc_zh": "网页VSCode",
     "image": "codercom/code-server:latest",
     "icon": "bi-code-slash",
     "description": "Web版VSCode，支持远程开发和代码编辑。",
@@ -111,6 +117,7 @@
   },
   {
     "name": "HomeAssistant",
+    "short_desc_zh": "家庭助手",
     "image": "homeassistant/home-assistant:latest",
     "icon": "bi-house-door",
     "description": "智能家居自动化平台，支持多种设备接入和自动化场景。",
@@ -122,6 +129,7 @@
   },
   {
     "name": "MariaDB",
+    "short_desc_zh": "玛利亚数据库",
     "image": "mariadb:latest",
     "icon": "bi-database",
     "description": "高性能开源数据库，MySQL兼容。",
@@ -133,6 +141,7 @@
   },
   {
     "name": "Grafana",
+    "short_desc_zh": "图表监控",
     "image": "grafana/grafana:latest",
     "icon": "bi-bar-chart",
     "description": "开源可视化监控平台，支持多数据源仪表盘。",
@@ -144,6 +153,7 @@
   },
   {
     "name": "WordPress",
+    "short_desc_zh": "博客建站",
     "image": "wordpress:latest",
     "icon": "bi-journal-richtext",
     "description": "流行博客和建站平台，支持丰富插件和主题。",
@@ -155,6 +165,7 @@
   },
   {
     "name": "FileBrowser",
+    "short_desc_zh": "文件浏览器",
     "image": "filebrowser/filebrowser:latest",
     "icon": "bi-folder2-open",
     "description": "Web文件管理器，支持多用户和权限管理。",
@@ -166,6 +177,7 @@
   },
   {
     "name": "Aria2",
+    "short_desc_zh": "闪电下载",
     "image": "p3terx/aria2-pro:latest",
     "icon": "bi-lightning-charge",
     "description": "多协议下载工具，支持BT、磁力、电驴、HTTP等。",
@@ -177,6 +189,7 @@
   },
   {
     "name": "Watchtower",
+    "short_desc_zh": "容器更新",
     "image": "containrrr/watchtower:latest",
     "icon": "bi-arrow-clockwise",
     "description": "自动检测并更新运行中的Docker容器。",
@@ -188,6 +201,7 @@
   },
   {
     "name": "Gitea",
+    "short_desc_zh": "代码托管",
     "image": "gitea/gitea:latest",
     "icon": "bi-git",
     "description": "轻量级自托管Git服务，支持代码托管和协作。",
@@ -199,6 +213,7 @@
   },
   {
     "name": "Uptime Kuma",
+    "short_desc_zh": " uptime监控",
     "image": "louislam/uptime-kuma:latest",
     "icon": "bi-activity",
     "description": "自托管站点和服务监控工具，支持多种通知。",
@@ -210,6 +225,7 @@
   },
   {
     "name": "MinIO",
+    "short_desc_zh": "对象存储",
     "image": "minio/minio:latest",
     "icon": "bi-hdd-network",
     "description": "高性能对象存储服务，兼容S3协议。",
@@ -219,4 +235,4 @@
     "env": ["MINIO_ACCESS_KEY=minioadmin", "MINIO_SECRET_KEY=minioadmin"],
     "volumes": ["/data/minio"]
   }
-] 
+]
