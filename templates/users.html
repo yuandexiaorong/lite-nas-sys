@@ -1,0 +1,69 @@
+{# ============================================================================
+  文件名: users.html
+  功能:   用户管理页面模板，仅管理员可见
+  作者: 梁宏伟 (lianghongwei)，邮箱: 287066024@qq.com
+  创建时间: 2025-07-16
+  最后修改: 2025-07-16
+  注意事项:
+    - 需传入 users 变量
+    - 需继承 base.html
+============================================================================ #}
+{% extends 'base.html' %}
+{% block title %}{{ _('用户管理') }}{% endblock %}
+{% block content %}
+<h2>{{ _('用户管理') }}</h2>
+<table class="table table-bordered table-hover">
+  <thead class="table-light">
+    <tr>
+      <th>{{ _('ID') }}</th>
+      <th>{{ _('用户名') }}</th>
+      <th>{{ _('权限') }}</th>
+      <th>{{ _('操作') }}</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for u in users %}
+    <tr>
+      <td>{{ u[0] }}</td>
+      <td>{{ u[1] }}</td>
+      <td>{% if u[2] %}{{ _('管理员') }}{% else %}{{ _('普通用户') }}{% endif %}</td>
+      <td>
+        {% if not u[2] %}
+        <a href="/set_admin/{{ u[0] }}" class="btn btn-success btn-sm">{{ _('设为管理员') }}</a>
+        {% else %}
+        <a href="/unset_admin/{{ u[0] }}" class="btn btn-warning btn-sm">{{ _('取消管理员') }}</a>
+        {% endif %}
+        <a href="/delete_user/{{ u[0] }}" class="btn btn-danger btn-sm" onclick="return confirmDelete('{{ u[1] }}', {{ u[2] }})">{{ _('删除') }}</a>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+<a href="/" class="btn btn-secondary">{{ _('返回') }}</a>
+
+<script>
+function confirmDelete(username, isAdmin) {
+    // 检查是否是管理员
+    if (isAdmin) {
+        alert('{{ _('不能删除管理员账户') }}');
+        return false;
+    }
+    
+    // 发送请求检查是否是最后一个用户
+    let xhr = new XMLHttpRequest();
+    xhr.open('GET', '/check_last_user', false); // 同步请求
+    xhr.send();
+    
+    if (xhr.status === 200) {
+        let response = JSON.parse(xhr.responseText);
+        if (response.isLastUser) {
+            alert('{{ _('不能删除最后一个用户') }}');
+            return false;
+        }
+    }
+    
+    // 普通用户删除确认
+    return confirm('{{ _('确定删除用户') }} ' + username + '?');
+}
+</script>
+{% endblock %}

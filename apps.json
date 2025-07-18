@@ -1,0 +1,222 @@
+[
+  {
+    "name": "Jellyfin",
+    "image": "jellyfin/jellyfin:latest",
+    "icon": "bi-film",
+    "description": "开源媒体服务器，支持多平台媒体管理和流媒体播放。",
+    "category_en": "Media",
+    "category_zh": "影音",
+    "default_ports": {"8096/tcp": 8096},
+    "env": [],
+    "volumes": ["/data/media"]
+  },
+  {
+    "name": "Nextcloud",
+    "image": "nextcloud:latest",
+    "icon": "bi-cloud",
+    "description": "私有云盘，支持文件同步、共享和协作。",
+    "category_en": "Cloud",
+    "category_zh": "云盘",
+    "default_ports": {"80/tcp": 8080},
+    "env": [],
+    "volumes": ["/data/nextcloud"]
+  },
+  {
+    "name": "Plex",
+    "image": "plexinc/pms-docker:latest",
+    "icon": "bi-film",
+    "description": "Plex 媒体服务器，支持多终端流媒体播放。",
+    "category_en": "Media",
+    "category_zh": "影音",
+    "default_ports": {"32400/tcp": 32400},
+    "env": [],
+    "volumes": ["/data/plex"]
+  },
+  {
+    "name": "Transmission",
+    "image": "linuxserver/transmission:latest",
+    "icon": "bi-download",
+    "description": "BT/PT 下载工具，支持Web管理。",
+    "category_en": "Download",
+    "category_zh": "下载",
+    "default_ports": {"9091/tcp": 9091, "51413/tcp": 51413},
+    "env": [],
+    "volumes": ["/data/downloads"]
+  },
+  {
+    "name": "qBittorrent",
+    "image": "linuxserver/qbittorrent:latest",
+    "icon": "bi-download",
+    "description": "qBittorrent 下载器，支持Web管理和多种协议。",
+    "category_en": "Download",
+    "category_zh": "下载",
+    "default_ports": {"8080/tcp": 8080, "6881/tcp": 6881},
+    "env": [],
+    "volumes": ["/data/qbittorrent"]
+  },
+  {
+    "name": "Syncthing",
+    "image": "syncthing/syncthing:latest",
+    "icon": "bi-arrow-repeat",
+    "description": "文件同步工具，支持多设备间实时同步。",
+    "category_en": "Sync",
+    "category_zh": "同步",
+    "default_ports": {"8384/tcp": 8384, "22000/tcp": 22000},
+    "env": [],
+    "volumes": ["/data/syncthing"]
+  },
+  {
+    "name": "Emby",
+    "image": "emby/embyserver:latest",
+    "icon": "bi-film",
+    "description": "Emby 媒体服务器，支持多平台媒体管理和播放。",
+    "category_en": "Media",
+    "category_zh": "影音",
+    "default_ports": {"8096/tcp": 8096},
+    "env": [],
+    "volumes": ["/data/emby"]
+  },
+  {
+    "name": "Portainer",
+    "image": "portainer/portainer-ce:latest",
+    "icon": "bi-gear",
+    "description": "Docker 可视化管理工具，支持容器、镜像、网络等管理。",
+    "category_en": "DevOps",
+    "category_zh": "运维",
+    "default_ports": {"9000/tcp": 9000},
+    "env": [],
+    "volumes": ["/var/run/docker.sock:/var/run/docker.sock"]
+  },
+  {
+    "name": "AdGuardHome",
+    "image": "adguard/adguardhome:latest",
+    "icon": "bi-shield-lock",
+    "description": "广告拦截DNS服务器，保护家庭网络安全。",
+    "category_en": "Network",
+    "category_zh": "网络",
+    "default_ports": {"3000/tcp": 3000, "53/tcp": 53},
+    "env": [],
+    "volumes": ["/data/adguard"]
+  },
+  {
+    "name": "Code-Server",
+    "image": "codercom/code-server:latest",
+    "icon": "bi-code-slash",
+    "description": "Web版VSCode，支持远程开发和代码编辑。",
+    "category_en": "Utility",
+    "category_zh": "工具",
+    "default_ports": {"8443/tcp": 8443},
+    "env": [],
+    "volumes": ["/data/code-server"]
+  },
+  {
+    "name": "HomeAssistant",
+    "image": "homeassistant/home-assistant:latest",
+    "icon": "bi-house-door",
+    "description": "智能家居自动化平台，支持多种设备接入和自动化场景。",
+    "category_en": "SmartHome",
+    "category_zh": "智能家居",
+    "default_ports": {"8123/tcp": 8123},
+    "env": [],
+    "volumes": ["/data/homeassistant"]
+  },
+  {
+    "name": "MariaDB",
+    "image": "mariadb:latest",
+    "icon": "bi-database",
+    "description": "高性能开源数据库，MySQL兼容。",
+    "category_en": "Database",
+    "category_zh": "数据库",
+    "default_ports": {"3306/tcp": 3306},
+    "env": ["MYSQL_ROOT_PASSWORD=example"],
+    "volumes": ["/data/mariadb"]
+  },
+  {
+    "name": "Grafana",
+    "image": "grafana/grafana:latest",
+    "icon": "bi-bar-chart",
+    "description": "开源可视化监控平台，支持多数据源仪表盘。",
+    "category_en": "Monitor",
+    "category_zh": "监控",
+    "default_ports": {"3000/tcp": 3000},
+    "env": [],
+    "volumes": ["/data/grafana"]
+  },
+  {
+    "name": "WordPress",
+    "image": "wordpress:latest",
+    "icon": "bi-journal-richtext",
+    "description": "流行博客和建站平台，支持丰富插件和主题。",
+    "category_en": "Website",
+    "category_zh": "建站",
+    "default_ports": {"80/tcp": 8081},
+    "env": ["WORDPRESS_DB_HOST=mariadb", "WORDPRESS_DB_PASSWORD=example"],
+    "volumes": ["/data/wordpress"]
+  },
+  {
+    "name": "FileBrowser",
+    "image": "filebrowser/filebrowser:latest",
+    "icon": "bi-folder2-open",
+    "description": "Web文件管理器，支持多用户和权限管理。",
+    "category_en": "Utility",
+    "category_zh": "工具",
+    "default_ports": {"8080/tcp": 8082},
+    "env": [],
+    "volumes": ["/data/files"]
+  },
+  {
+    "name": "Aria2",
+    "image": "p3terx/aria2-pro:latest",
+    "icon": "bi-lightning-charge",
+    "description": "多协议下载工具，支持BT、磁力、电驴、HTTP等。",
+    "category_en": "Download",
+    "category_zh": "下载",
+    "default_ports": {"6800/tcp": 6800},
+    "env": [],
+    "volumes": ["/data/aria2"]
+  },
+  {
+    "name": "Watchtower",
+    "image": "containrrr/watchtower:latest",
+    "icon": "bi-arrow-clockwise",
+    "description": "自动检测并更新运行中的Docker容器。",
+    "category_en": "DevOps",
+    "category_zh": "运维",
+    "default_ports": {},
+    "env": [],
+    "volumes": ["/var/run/docker.sock:/var/run/docker.sock"]
+  },
+  {
+    "name": "Gitea",
+    "image": "gitea/gitea:latest",
+    "icon": "bi-git",
+    "description": "轻量级自托管Git服务，支持代码托管和协作。",
+    "category_en": "DevOps",
+    "category_zh": "运维",
+    "default_ports": {"3000/tcp": 3001, "22/tcp": 2222},
+    "env": [],
+    "volumes": ["/data/gitea"]
+  },
+  {
+    "name": "Uptime Kuma",
+    "image": "louislam/uptime-kuma:latest",
+    "icon": "bi-activity",
+    "description": "自托管站点和服务监控工具，支持多种通知。",
+    "category_en": "Monitor",
+    "category_zh": "监控",
+    "default_ports": {"3001/tcp": 3002},
+    "env": [],
+    "volumes": ["/data/uptime-kuma"]
+  },
+  {
+    "name": "MinIO",
+    "image": "minio/minio:latest",
+    "icon": "bi-hdd-network",
+    "description": "高性能对象存储服务，兼容S3协议。",
+    "category_en": "Storage",
+    "category_zh": "存储",
+    "default_ports": {"9000/tcp": 9001},
+    "env": ["MINIO_ACCESS_KEY=minioadmin", "MINIO_SECRET_KEY=minioadmin"],
+    "volumes": ["/data/minio"]
+  }
+] 

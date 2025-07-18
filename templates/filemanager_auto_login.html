@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>自动登录文件管理器</title>
+  <style>
+    body { font-family: 'Segoe UI', Arial, sans-serif; background: #f8fafc; color: #222; display: flex; align-items: center; justify-content: center; height: 100vh; }
+    #msg { font-size: 1.2rem; background: #fff; padding: 2.5rem 2rem; border-radius: 1.2rem; box-shadow: 0 4px 24px rgba(0,0,0,0.08); }
+  </style>
+</head>
+<body>
+  <div id="msg">正在自动登录文件管理器...</div>
+  <script>
+    fetch('/filemanager/api/login', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({username: 'admin', password: 'Admin@12345678'})
+    })
+    .then(r => r.json())
+    .then(data => {
+      if (data.jwt) {
+        localStorage.setItem('filebrowserJWT', data.jwt);
+        window.location.href = '/filemanager/';
+      } else {
+        document.getElementById('msg').innerText = '自动登录失败，请联系管理员';
+      }
+    })
+    .catch(() => {
+      document.getElementById('msg').innerText = '自动登录失败，请检查网络或稍后重试';
+    });
+  </script>
+</body>
+</html>

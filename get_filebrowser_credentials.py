@@ -1,0 +1,5 @@
+print("FileBrowser管理员账户信息:")
+print("用户名: admin")
+print("密码: z4eilc40yV-RuRI_")
+print("\n重要提示: 登录后请立即更改密码以确保安全。")
+print("您可以通过访问 http://localhost:8088 来登录FileBrowser。")

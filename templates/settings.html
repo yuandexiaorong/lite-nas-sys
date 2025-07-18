@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+{% block title %}壁纸设置{% endblock %}
+{% block content %}
+<h2>壁纸设置</h2>
+<div class="row">
+  {% for wp in wallpapers %}
+  <div class="col-4 col-md-2 mb-3">
+    <div class="card shadow-sm border-{% if wp==current_wallpaper %}primary{% else %}light{% endif %} wallpaper-thumb"
+         style="cursor:pointer;overflow:hidden;{% if wp==current_wallpaper %}border-width:2px;{% endif %}"
+         onclick="setWallpaper('{{ wp }}')">
+      <img src="{{ url_for('static', filename='wallpapers/' + wp) }}" class="img-fluid" />
+    </div>
+  </div>
+  {% endfor %}
+</div>
+<form id="uploadForm" enctype="multipart/form-data" method="post" action="/upload_wallpaper">
+  <input type="file" name="wallpaper" accept="image/*" required>
+  <button type="submit" class="btn btn-primary btn-sm mt-2">上传自定义壁纸</button>
+</form>
+<script>
+function setWallpaper(wp) {
+  fetch('/api/set_wallpaper', {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({wallpaper: wp})
+  }).then(r=>r.json()).then(res=>{
+    if(res.status==='ok') location.reload();
+  });
+}
+</script>
+{% endblock %} 

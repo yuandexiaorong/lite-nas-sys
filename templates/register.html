@@ -1,0 +1,31 @@
+{# ============================================================================
+  文件名: register.html
+  功能:   用户注册页面模板
+  作者: 梁宏伟 (lianghongwei)，邮箱: 287066024@qq.com
+  创建时间: 2025-07-16
+  最后修改: 2025-07-16
+  注意事项:
+    - 需继承 base.html
+    - 表单提交到 /register
+============================================================================ #}
+{% extends 'base.html' %}
+{% block title %}{{ _('注册') }}{% endblock %}
+{% block content %}
+<div class="row justify-content-center">
+  <div class="col-md-4">
+    <h2 class="mb-3">{{ _('注册') }}</h2>
+    <form method="post">
+      <div class="mb-3">
+        <label for="username" class="form-label">{{ _('用户名') }}</label>
+        <input type="text" class="form-control" id="username" name="username" required> {# 用户名输入 #}
+      </div>
+      <div class="mb-3">
+        <label for="password" class="form-label">{{ _('密码') }}</label>
+        <input type="password" class="form-control" id="password" name="password" required> {# 密码输入 #}
+      </div>
+      <button type="submit" class="btn btn-success">{{ _('注册') }}</button>
+      <a href="{{ url_for('login') }}" class="btn btn-link">{{ _('登录') }}</a> {# 跳转到登录页 #}
+    </form>
+  </div>
+</div>
+{% endblock %}

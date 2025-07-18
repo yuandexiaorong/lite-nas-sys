@@ -1,0 +1,413 @@
+{# ============================================================================
+  文件名: base.html
+  功能:   所有页面的基础模板，包含导航栏、语言切换、消息闪现等
+  作者: 梁宏伟 (lianghongwei)，邮箱: 287066024@qq.com
+  创建时间: 2025-07-16
+  最后修改: 2025-07-17
+  注意事项:
+    - 所有页面均应继承本模板
+    - 语言切换依赖 get_locale() 注入
+    - 项目名称：嵌入式轻nas管理软件
+============================================================================ #}
+<!DOCTYPE html>
+<html lang="{{ get_locale() }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}嵌入式轻nas管理软件{% endblock %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <style>
+      body {
+        {% set wallpaper = current_user.wallpaper if current_user.is_authenticated and current_user.wallpaper else '1.jpg' %}
+        background-color: #e9ecef;
+        background-image:
+          url('{{ url_for('static', filename='wallpapers/' + wallpaper) }}'),
+          linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background-position: center;
+        background-size: cover;
+        background-repeat: no-repeat;
+        background-attachment: fixed;
+        min-height: 100vh;
+      }
+      .container {
+        background: linear-gradient(135deg, rgba(255,255,255,0.95) 0%, rgba(255,255,255,0.90) 100%);
+        border-radius: 2.2rem;
+        box-shadow: 0 8px 48px rgba(0,0,0,0.10);
+        backdrop-filter: blur(12px);
+        padding-top: 2.5rem;
+        padding-bottom: 2.5rem;
+        margin-top: 2.5rem;
+        margin-bottom: 2.5rem;
+      }
+      .navbar {
+        backdrop-filter: blur(10px);
+        background: rgba(33,37,41,0.95) !important;
+        border-bottom: 1px solid rgba(255,255,255,0.1);
+      }
+      .navbar-brand {
+        font-weight: bold;
+        color: #fff !important;
+      }
+      .nav-link {
+        color: rgba(255,255,255,0.8) !important;
+        transition: color 0.3s ease;
+      }
+      .nav-link:hover {
+        color: #fff !important;
+      }
+      .alert {
+        border-radius: 1rem;
+        border: none;
+        box-shadow: 0 4px 16px rgba(0,0,0,0.10);
+      }
+    </style>
+</head>
+<body>
+<!-- 更改壁纸模态框 -->
+<div class="modal fade" id="wallpaperModal" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content" style="background:#ede6dd;">
+      <div class="modal-header border-0">
+        <h5 class="modal-title">更改壁纸</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <!-- 上传壁纸区域 -->
+        <div class="mb-4 p-4 border-2 border-dashed rounded-lg text-center">
+          <h6 class="mb-2">上传新壁纸</h6>
+          <input type="file" id="wallpaperUpload" accept="image/*" class="d-none" />
+          <label for="wallpaperUpload" class="btn btn-outline-primary mb-2">选择图片</label>
+          <p class="text-sm text-gray-500">支持 JPG、PNG 格式，建议分辨率 1920×1080</p>
+          <div id="uploadProgress" class="mt-2 d-none">
+            <div class="progress" style="height: 8px;">
+              <div class="progress-bar bg-primary" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+            </div>
+            <p id="uploadStatus" class="mt-1 text-sm"></p>
+          </div>
+        </div>
+        <!-- 壁纸列表 -->
+        <div class="row" id="wallpaperList"></div>
+      </div>
+      <div class="modal-footer border-0">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+        <button type="button" class="btn btn-primary" id="submitWallpaperBtn">提交</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark mb-4">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="/">嵌入式轻nas管理软件</a>
+    <div class="collapse navbar-collapse">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        {% if current_user.is_authenticated %}
+        <li class="nav-item"><a class="nav-link" href="/">{{ _('首页') }}</a></li>
+        {% if current_user.is_admin %}
+        <li class="nav-item"><a class="nav-link" href="/users">{{ _('用户管理') }}</a></li>
+        <li class="nav-item"><a class="nav-link" href="/change_password">{{ _('修改密码') }}</a></li>
+        {% endif %}
+        <li class="nav-item"><a class="nav-link" href="/logout">{{ _('登出') }}</a></li>
+        {% endif %}
+        <li class="nav-item">
+          <a class="nav-link" href="{{ url_for('appstore') }}"><i class="bi bi-shop"></i> {{ _('应用商店') }}</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="/filemanager/" target="_blank"><i class="bi bi-folder2-open"></i> 文件管理器</a>
+        </li>
+      </ul>
+      <ul class="navbar-nav">
+        <li class="nav-item dropdown">
+          <a class="nav-link dropdown-toggle" href="#" id="langDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            {{ _('语言') }}
+          </a>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="langDropdown">
+            <li><a class="dropdown-item" href="/set_language/zh">中文</a></li>
+            <li><a class="dropdown-item" href="/set_language/en">English</a></li>
+          </ul>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+<div class="container">
+  {% with messages = get_flashed_messages() %}
+    {% if messages %}
+      <div class="alert alert-info" role="alert">
+        {% for message in messages %}{{ message }}<br>{% endfor %}
+      </div>
+    {% endif %}
+  {% endwith %}
+  {% block content %}{% endblock %}
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// 辅助函数：生成url_for类似功能
+function url_for(endpoint, params) {
+  // 处理参数为字符串的情况
+  if (typeof params === 'string') {
+    if (endpoint === 'static') {
+      return '/static/' + params;
+    }
+    return '/' + endpoint + '/' + params;
+  }
+  
+  // 处理参数为对象的情况
+  if (typeof params === 'object') {
+    // 处理静态文件特殊情况
+    if (endpoint === 'static' && params.filename) {
+      return '/static/' + params.filename;
+    }
+    // 处理其他情况
+    let url = '/' + endpoint;
+    if (Object.keys(params).length > 0) {
+      url += '?';
+      const queryParams = [];
+      for (const [key, value] of Object.entries(params)) {
+        queryParams.push(`${encodeURIComponent(key)}=${encodeURIComponent(value)}`);
+      }
+      url += queryParams.join('&');
+    }
+    return url;
+  }
+  
+  // 没有参数的情况
+  return '/' + endpoint;
+}
+document.addEventListener('DOMContentLoaded', function() {
+  // 页面加载时初始化当前壁纸信息
+  fetch('/api/wallpaper_list').then(r=>r.json()).then(data=>{
+    window.currentWallpaper = data.current;
+    console.log('页面加载时初始化壁纸信息:', window.currentWallpaper);
+  });
+  // 右键弹出壁纸选择模态框
+  document.body.addEventListener('contextmenu', function(e) {
+    if (e.target === document.body) {
+      e.preventDefault();
+      showWallpaperModal();
+    }
+  });
+
+  let selectedWallpaper = null;
+  function showWallpaperModal() {
+    fetch('/api/wallpaper_list').then(r=>r.json()).then(data=>{
+        // 优先使用前端存储的当前壁纸信息
+        if (window.currentWallpaper && data.wallpapers.includes(window.currentWallpaper)) {
+          data.current = window.currentWallpaper;
+        }
+      const list = document.getElementById('wallpaperList');
+      list.innerHTML = '';
+      data.wallpapers.forEach(wp => {
+        const col = document.createElement('div');
+        col.className = 'col-4 col-md-3 mb-3';
+        col.innerHTML = `
+          <div class="card shadow-sm border-2 wallpaper-thumb ${wp===data.current ? 'border-primary' : 'border-light'}"
+               style="cursor:pointer;overflow:hidden;transition: all 0.3s ease; position: relative; ${wp===data.current?'border-width:3px; transform: scale(1.05); box-shadow: 0 4px 12px rgba(0,0,0,0.15);':''}"
+               data-wp="${wp}">
+            ${wp===data.current ? '<div class="absolute top-0 right-0 bg-primary text-white px-2 py-1 rounded-bl-lg text-sm font-bold">当前</div>' : ''}
+            <img src="/static/wallpapers/${wp}" class="img-fluid" />
+          </div>
+        `;
+        list.appendChild(col);
+      });
+      document.querySelectorAll('.wallpaper-thumb').forEach(card => {
+        card.onclick = function() {
+          // 移除所有卡片的选中样式
+          document.querySelectorAll('.wallpaper-thumb').forEach(c => {
+            c.classList.remove('border-primary');
+            c.style.borderWidth = '2px';
+            c.style.transform = 'scale(1)';
+            c.style.boxShadow = '0 2px 8px rgba(0,0,0,0.1)';
+          });
+          // 添加当前卡片的选中样式
+          this.classList.add('border-primary');
+          this.style.borderWidth = '3px';
+          this.style.transform = 'scale(1.05)';
+          this.style.boxShadow = '0 4px 12px rgba(0,0,0,0.15)';
+          selectedWallpaper = this.getAttribute('data-wp');
+        };
+      });
+      selectedWallpaper = data.current;
+      new bootstrap.Modal(document.getElementById('wallpaperModal')).show();
+    });
+  }
+
+  // 上传壁纸处理
+  document.getElementById('wallpaperUpload').onchange = function(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    // 检查文件类型
+    const validTypes = ['image/jpeg', 'image/png', 'image/jpg'];
+    if (!validTypes.includes(file.type)) {
+      alert('请上传 JPG 或 PNG 格式的图片');
+      return;
+    }
+
+    // 检查文件大小 (限制 5MB)
+    if (file.size > 5 * 1024 * 1024) {
+      alert('图片大小不能超过 5MB');
+      return;
+    }
+
+    // 显示上传进度
+    const uploadProgress = document.getElementById('uploadProgress');
+    const progressBar = uploadProgress.querySelector('.progress-bar');
+    const uploadStatus = document.getElementById('uploadStatus');
+    uploadProgress.classList.remove('d-none');
+    progressBar.style.width = '0%';
+    uploadStatus.textContent = '准备上传...';
+
+    // 创建FormData并上传
+    const formData = new FormData();
+    formData.append('wallpaper', file);
+
+    fetch('/api/upload_wallpaper', {
+      method: 'POST',
+      body: formData,
+      headers: {
+        // 不需要设置Content-Type，浏览器会自动设置
+      },
+      // 监听上传进度
+      onprogress: function(e) {
+        if (e.lengthComputable) {
+          const percent = (e.loaded / e.total) * 100;
+          progressBar.style.width = percent + '%';
+          uploadStatus.textContent = `上传中: ${Math.round(percent)}%`;
+        }
+      }
+    }).then(r => r.json()).then(res => {
+      if (res.status === 'success') {
+        progressBar.style.width = '100%';
+        uploadStatus.textContent = '上传成功！';
+        uploadStatus.classList.add('text-success');
+
+        // 刷新壁纸列表
+        setTimeout(() => {
+          showWallpaperModal();
+          uploadProgress.classList.add('d-none');
+          uploadStatus.classList.remove('text-success');
+          document.getElementById('wallpaperUpload').value = '';
+        }, 1000);
+      } else {
+        uploadStatus.textContent = '上传失败: ' + res.message;
+        uploadStatus.classList.add('text-danger');
+      }
+    }).catch(err => {
+      console.error('上传壁纸出错:', err);
+      uploadStatus.textContent = '上传时发生错误';
+      uploadStatus.classList.add('text-danger');
+    });
+  };
+
+  document.getElementById('submitWallpaperBtn').onclick = function() {
+    if (!selectedWallpaper) {
+      alert('请先选择一张壁纸');
+      return;
+    }
+    // 显示加载状态
+    this.disabled = true;
+    this.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> 应用中...';
+
+    fetch('/api/set_wallpaper', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({wallpaper: selectedWallpaper})
+    }).then(r=>r.json()).then(res=>{
+      // 恢复按钮状态
+      this.disabled = false;
+      this.innerHTML = '提交';
+
+      if(res.status==='success') {
+          // 更新前端存储的当前壁纸信息
+          window.currentWallpaper = selectedWallpaper;
+          console.log('壁纸设置成功，当前壁纸:', window.currentWallpaper);
+        // 不刷新页面，直接更新背景
+        // 验证壁纸文件是否存在
+        const img = new Image();
+        img.onload = function() {
+          // 设置背景图片
+          document.body.style.backgroundImage = `url('${url_for('static', filename='wallpapers/' + selectedWallpaper)}'), linear-gradient(135deg, #667eea 0%, #764ba2 100%)`;
+          
+          // 创建临时画布用于提取颜色
+          const canvas = document.createElement('canvas');
+          const ctx = canvas.getContext('2d');
+          canvas.width = img.width;
+          canvas.height = img.height;
+          ctx.drawImage(img, 0, 0);
+          
+          // 获取图片中心区域的像素数据
+          const centerX = Math.floor(canvas.width / 2);
+          const centerY = Math.floor(canvas.height / 2);
+          const pixelData = ctx.getImageData(centerX - 50, centerY - 50, 100, 100).data;
+          
+          // 计算平均颜色
+          let r = 0, g = 0, b = 0;
+          for (let i = 0; i < pixelData.length; i += 4) {
+            r += pixelData[i];
+            g += pixelData[i + 1];
+            b += pixelData[i + 2];
+          }
+          const pixelCount = pixelData.length / 4;
+          r = Math.floor(r / pixelCount);
+          g = Math.floor(g / pixelCount);
+          b = Math.floor(b / pixelCount);
+          
+          // 转换为RGB字符串
+          const mainColor = `rgb(${r}, ${g}, ${b})`;
+          
+          // 计算对比度，确定文本颜色
+          const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+          const textColor = luminance > 0.5 ? 'rgb(0, 0, 0)' : 'rgb(255, 255, 255)';
+          
+          // 更新容器背景和文本颜色
+          const container = document.querySelector('.container');
+          container.style.background = `linear-gradient(135deg, rgba(${r}, ${g}, ${b}, 0.9) 0%, rgba(${r}, ${g}, ${b}, 0.85) 100%)`;
+          container.style.color = textColor;
+          
+          // 更新信息卡片样式
+          const infoCards = document.querySelectorAll('.info-card');
+          infoCards.forEach(card => {
+            card.style.background = `linear-gradient(135deg, rgba(${r}, ${g}, ${b}, 0.9) 60%, rgba(${r+20}, ${g+20}, ${b+20}, 0.95) 100%)`;
+          });
+        };
+        img.onerror = function() {
+          alert('壁纸文件加载失败，请选择其他壁纸');
+          console.error('壁纸文件不存在:', 'static/wallpapers/' + selectedWallpaper);
+        };
+        img.src = url_for('static', filename='wallpapers/' + selectedWallpaper);
+        // 上传成功后重置文件输入
+        document.getElementById('wallpaperUpload').value = '';
+        document.getElementById('uploadProgress').classList.add('d-none');
+        // 显示成功提示
+        const alertDiv = document.createElement('div');
+        alertDiv.className = 'alert alert-success fixed-top w-50 mx-auto mt-4 z-50';
+        alertDiv.style.top = '20px';
+        alertDiv.style.left = '50%';
+        alertDiv.style.transform = 'translateX(-50%)';
+        alertDiv.innerHTML = '壁纸设置成功！';
+        document.body.appendChild(alertDiv);
+        // 3秒后关闭提示
+        setTimeout(() => {
+          alertDiv.remove();
+        }, 3000);
+        // 关闭模态框
+        bootstrap.Modal.getInstance(document.getElementById('wallpaperModal')).hide();
+      } else {
+        alert('设置壁纸失败: ' + res.message);
+      }
+    }).catch(err=>{
+      // 恢复按钮状态
+      this.disabled = false;
+      this.innerHTML = '提交';
+
+      console.error('设置壁纸出错:', err);
+      alert('设置壁纸时发生错误');
+    });
+  };
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,605 @@
+{# ============================================================================
+    文件名: appstore_simple.html
+    功能:   应用商店页面 - 简化版本，专门解决模态框问题
+    作者:   lianghongwei
+    创建时间:20257-17
+    修复内容: 彻底解决模态框背景残留问题
+  ============================================================================ #}
+{% extendsbase.html' %}
+{% block title %}{{ _('应用商店') }} - 嵌入式轻nas管理软件{% endblock %}
+{% block content %}
+<div class="mb-4><div class="d-flex align-items-center justify-content-between mb-3>
+    <div class="d-flex align-items-center">
+      <i class="bi bi-shop fs-3 text-primary me-2i>
+      <h3 class="fw-bold mb-0">[object Object][object Object]_('应用商店') }}</h3>
+    </div>
+    {% if current_user.is_admin %}
+    <button class="btn btn-primary onclick=showAddAppModal()">
+      <i class=bi bi-plus-circle me-1></i>{{ _(添加APP) }}
+    </button>
+  [object Object]% endif %}
+  </div>
+  <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-44
+    {% for app in apps %}
+    <div class="col">
+      <div class="card app-card h-10 border-0 position-relative" style=border-radius:12em;background:rgba(2552552555);backdrop-filter:blur(2);">
+        {% if current_user.is_admin %}
+        <div class=position-absolute top-0end-0 p-2style="z-index:10;">
+          <div class="dropdown">
+            <button class="btn btn-sm btn-outline-secondary" type="button data-bs-toggle="dropdown" aria-expanded="false>
+              <i class=bi bi-three-dots-vertical></i>
+            </button>
+            <ul class="dropdown-menu>
+              <li><a class="dropdown-itemhref="#onclick="editApp('{{ app|tojson|safe }}')>
+                <i class=bibi-pencil me-1</i>{{ _('编辑') }}
+              </a></li>
+              <li><a class="dropdown-item text-dangerhref="#" onclick=deleteApp('{{ app.name }}')>
+                <i class="bi bi-trash me-1</i>{{ _('删除') }}
+              </a></li>
+            </ul>
+          </div>
+        </div>
+  [object Object]% endif %}
+        <div class="card-body d-flex flex-column align-items-center justify-content-center text-center" style=min-height: 200px; padding-top:3rem;">
+          <i class=bi {{ app.icon }} display-3 mb-2 text-primary style="font-size:2.5em;" title="{{ app.description }}></i>
+          <div class="fw-bold mb-1>{[object Object]app.name }}</div>
+          <div class="text-muted small mb-1 style="max-width:320px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;" title="{{ app.description }}">{{ app.description }}</div>
+          <div class="text-secondary small mb-2
+            {% if get_locale() == 'zh %}
+              {{ app.category_zh or }}
+            {% else %}
+              {{ app.category_en or }}
+            {% endif %}
+          </div>
+          {% set app_name = app.name.lower() %}
+          {% if app_name in installed_names %}
+            <button class=btn btn-secondary btn-sm mb-1led>
+              {{ _('已安装)if get_locale() ==zh else _('Installed') }}
+            </button>
+          {% else %}
+            <button class="btn btn-outline-primary btn-sm mb-1-75click="showInstallModal(this) data-app='{{ app|tojson|safe }}'>
+              {{ _('安装)if get_locale() == 'zh' else _('Install') }}
+            </button>
+    [object Object]% endif %}
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+</div>
+
+<!-- 添加APP模态框 -->
+<div class="modal fade id="addAppModaltabindex=-1 <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class=modal-title">{[object Object] _(添加新APP) }}</h5      <button type="button class=btn-close" data-bs-dismiss=modal" aria-label=Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="addAppForm">
+          <div class=row">
+            <div class="col-md-6>              <div class="mb-3>
+                <label for="appName" class="form-label>{{ _('APP名称') }} *</label>
+                <input type=textlass="form-control" id=appName" required>
+              </div>
+              <div class="mb-3>
+                <label for=appImage" class="form-label>{[object Object]_(Docker镜像') }} *</label>
+                <input type=textlass="form-control" id="appImageplaceholder=例如: nginx:latest" required>
+              </div>
+              <div class="mb-3>
+                <label for="appIcon" class="form-label">{{ _('图标') }}</label>
+                <select class=form-select" id="appIcon">
+                  <option value="bi-app">{{ _(默认
+                  <option value=bi-film">{{ _(影音
+                  <option value=bi-cloud">{{ _(云盘
+                  <option value=bi-download">{{ _(下载
+                  <option value=bi-gear">{{ _(工具
+                  <option value=bi-database>{{ _('数据库') }}</option>
+                  <option value="bi-bar-chart">{{ _(监控
+                  <option value=bi-house-door">{{ _(智能家居') }}</option>
+                  <option value="bi-shield-lock">{{ _(安全
+                  <option value=bi-code-slash">{{ _(开发n>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6>              <div class="mb-3>
+                <label for="appCategoryZh" class="form-label">{{ _('中文分类') }} *</label>
+                <input type=textlass="form-control" id="appCategoryZh" required>
+              </div>
+              <div class="mb-3>
+                <label for="appCategoryEn" class="form-label">{{ _('英文分类') }} *</label>
+                <input type=textlass="form-control" id="appCategoryEn" required>
+              </div>
+              <div class="mb-3>
+                <label for=appPorts" class="form-label">{{ _('端口映射') }}</label>
+                <input type=textlass="form-control" id="appPorts placeholder=例如: 880>
+                <div class=form-text>[object Object][object Object]_(格式：主机端口:容器端口，多个用逗号分隔') }}</div>
+              </div>
+            </div>
+          </div>
+          <div class="mb-3            <label for="appDescription" class="form-label">{{ _('描述') }} *</label>
+            <textarea class="form-control" id="appDescription" rows="3" required></textarea>
+          </div>
+          <div class="mb-3            <label for=appVolumes" class="form-label>{{_(数据卷label>
+            <input type=textlass="form-control" id="appVolumesplaceholder="例如: /data/app:/app/data">
+            <div class=form-text>[object Object][object Object]_(格式：主机路径:容器路径，多个用逗号分隔') }}</div>
+          </div>
+          <div class="mb-3            <label for="appEnv" class="form-label">{{ _('环境变量') }}</label>
+            <textarea class="form-controlid="appEnv" rows="2placeholder="例如: PASSWORD=123456G=true"></textarea>
+            <div class=form-text">[object Object][object Object]_(格式：KEY=VALUE，多个用逗号分隔') }}</div>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer>      <button type="button" class=btn btn-secondary" data-bs-dismiss=modal">{{ _(取消}</button>
+        <button type="button" class="btn btn-primary" onclick="submitAddApp()">{{ _(添加 }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 编辑APP模态框 -->
+<div class="modal fade id=editAppModaltabindex=-1 <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class=modal-title">[object Object][object Object] _('编辑APP) }}</h5      <button type="button class=btn-close" data-bs-dismiss=modal" aria-label=Close"></button>
+      </div>
+      <div class="modal-body">
+        <form id="editAppForm">
+          <input type="hidden" id="editAppOriginalName">
+          <div class=row">
+            <div class="col-md-6>              <div class="mb-3>
+                <label for="editAppName" class="form-label>{{ _('APP名称') }} *</label>
+                <input type=textlass="form-control id=tAppName" required>
+              </div>
+              <div class="mb-3>
+                <label for="editAppImage" class="form-label>{[object Object]_(Docker镜像') }} *</label>
+                <input type=textlass="form-control id="editAppImage" required>
+              </div>
+              <div class="mb-3>
+                <label for="editAppIcon" class="form-label">{{ _('图标') }}</label>
+                <select class=form-select" id="editAppIcon">
+                  <option value="bi-app">{{ _(默认
+                  <option value=bi-film">{{ _(影音
+                  <option value=bi-cloud">{{ _(云盘
+                  <option value=bi-download">{{ _(下载
+                  <option value=bi-gear">{{ _(工具
+                  <option value=bi-database>{{ _('数据库') }}</option>
+                  <option value="bi-bar-chart">{{ _(监控
+                  <option value=bi-house-door">{{ _(智能家居') }}</option>
+                  <option value="bi-shield-lock">{{ _(安全
+                  <option value=bi-code-slash">{{ _(开发n>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6>              <div class="mb-3>
+                <label for=editAppCategoryZh" class="form-label">{{ _('中文分类') }} *</label>
+                <input type=textlass="form-control" id=editAppCategoryZh" required>
+              </div>
+              <div class="mb-3>
+                <label for=editAppCategoryEn" class="form-label">{{ _('英文分类') }} *</label>
+                <input type=textlass="form-control" id=editAppCategoryEn" required>
+              </div>
+              <div class="mb-3>
+                <label for="editAppPorts" class="form-label">{{ _('端口映射') }}</label>
+                <input type=textlass="form-control id="editAppPorts">
+              </div>
+            </div>
+          </div>
+          <div class="mb-3            <label for="editAppDescription" class="form-label">{{ _('描述') }} *</label>
+            <textarea class="form-control" id="editAppDescription" rows="3" required></textarea>
+          </div>
+          <div class="mb-3            <label for="editAppVolumes" class="form-label>{{_(数据卷label>
+            <input type=textlass="form-control" id=editAppVolumes>
+          </div>
+          <div class="mb-3            <label for=editAppEnv" class="form-label">{{ _('环境变量') }}</label>
+            <textarea class="form-control" id="editAppEnv" rows="2"></textarea>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer>      <button type="button" class=btn btn-secondary" data-bs-dismiss=modal">{{ _(取消}</button>
+        <button type="button" class="btn btn-primary" onclick="submitEditApp()">{{ _(保存 }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 安装进度弹窗 -->
+<div class="modal fade id=installModaltabindex=-1 <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title"><span id="installingTitle"></span></h5      <button type="button class=btn-close" data-bs-dismiss=modal" aria-label=Close"></button>
+      </div>
+      <div class="modal-body text-center">
+        <div class="mb-3        <div class=spinner-grow text-primary" role="status" style=width:2rem;height:2rem;">
+            <span class=visually-hidden>Loading...</span>
+          </div>
+        </div>
+        <div id="progressIndeterminate" class="progress mb-2 style="height:15; display:none;">
+          <div class="progress-bar progress-bar-striped progress-bar-animated bg-info" style="width: 100></div>
+        </div>
+        <div id="progressDeterminate" class="progress mb-2 style="height:15; display:none;">
+          <div class="progress-bar bg-success" role="progressbar"
+               id="installProgressBarInner" style="width: 0%;>0%</div>
+        </div>
+        <div class="fw-bold" id=installStatusText">{{ _('Starting installation') }}</div>
+      </div>
+      <div class="modal-footer>      <button type="button" class="btn btn-outline-primary" id="continueBgBtn" data-bs-dismiss=modal"></button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="toast-container" class="position-fixed top-0 start-50translate-middle-x p-3style="z-index:9999></div>
+
+<style>
+#toast-container .toast [object Object]
+  width: 360;
+  min-width: 360;
+  max-width: 360px;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+  text-align: center;
+  box-sizing: border-box;
+}
+#toast-container .toast-body {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.app-card {
+  transition: box-shadow 0.2, transform0.2position: relative;
+}
+
+.app-card:hover [object Object]
+  box-shadow: 0 8px 32px rgba(0,0,0,00.18ansform: translateY(-4) scale(104}
+
+.app-card .card-body {
+  min-height:200x;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding-top: 3em;
+}
+
+.app-card .dropdown {
+  position: absolute;
+  top: 0.5m;
+  right: 00.5rem;
+  z-index: 10;
+}
+
+.dropdown-menu[object Object]
+  z-index: 1060
+</style>
+
+<script>
+// 简化的模态框管理
+let currentModal = null;
+
+// 显示模态框
+function showModal(modalId)[object Object]  // 先隐藏当前模态框
+  if (currentModal) [object Object]    currentModal.hide();
+  }
+  
+  // 清理可能残留的背景
+  document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove());
+  document.body.classList.remove('modal-open');
+  document.body.style.overflow = ';
+  document.body.style.paddingRight = ;
+  
+  // 创建新模态框
+  const modalElement = document.getElementById(modalId);
+  if (modalElement) [object Object]    currentModal = new bootstrap.Modal(modalElement);
+    currentModal.show();
+    
+    // 监听隐藏事件
+    modalElement.addEventListener(hidden.bs.modal', function() {
+      // 清理背景
+      document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove());
+      document.body.classList.remove('modal-open);     document.body.style.overflow =      document.body.style.paddingRight =      currentModal = null;
+    }, { once: true });
+  }
+}
+
+// 隐藏模态框
+function hideModal() {
+  if (currentModal) [object Object]    currentModal.hide();
+  }
+  // 强制清理
+  document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove());
+  document.body.classList.remove('modal-open');
+  document.body.style.overflow = ';
+  document.body.style.paddingRight = ;
+}
+
+// 页面加载时初始化
+document.addEventListener('DOMContentLoaded', function() {
+  // 初始化下拉菜单
+  var dropdownElementList = [].slice.call(document.querySelectorAll('.dropdown-toggle'));
+  var dropdownList = dropdownElementList.map(function (dropdownToggleEl) {
+    return new bootstrap.Dropdown(dropdownToggleEl);
+  });
+  
+  // 清理可能残留的模态框背景
+  document.querySelectorAll('.modal-backdrop').forEach(backdrop => backdrop.remove());
+  document.body.classList.remove('modal-open');
+  document.body.style.overflow = ';
+  document.body.style.paddingRight = ;
+  
+  // 监听所有关闭按钮
+  document.addEventListener('click,function(event) {
+    if (event.target.classList.contains('btn-close') || 
+        event.target.classList.contains('btn-secondary') ||
+        event.target.getAttribute(data-bs-dismiss) === 'modal') [object Object]      setTimeout(hideModal, 100
+    }
+  });
+});
+
+const i18n = [object Object]  install: {{ _('安装') }}",
+  installed: {{ _('已安装) }},
+  starting: "[object Object]{ _('开始安装) }}",
+  pulling:{{ _('拉取APP源中...) }},
+  creating: {{ _(创建APP中...') }}",
+  finishing: {{ _('收尾中...) }},
+  complete:{[object Object] _('安装完成！') }},
+  failed: "[object Object]{ _(安装失败') }}",
+  app_deleted: {{ _('APP已删除') }},app_source_deleted: "{{ _('APP源已删除') }}",
+  confirm_app: {{ _('确定要删除该APP吗？') }},
+  confirm_image: {{ _(确定要删除该APP源吗？') }},
+  installing: "{{ _('安装中)if get_locale() ==zhelse _('Installing) }}",
+  continue_bg: "{{ _(后台安装)if get_locale() == 'zh else _('Continue in background') }}",
+  add_success: "{{ _('APP添加成功') }},
+  edit_success: "{{ _('APP更新成功) }}",
+  delete_success: "{{ _('APP删除成功') }}",
+  confirm_delete: {{ _('确定要删除该APP吗？)}}
+};
+
+// 显示添加APP模态框
+function showAddAppModal() {
+  document.getElementById('addAppForm).reset();
+  showModal('addAppModal');
+}
+
+// 显示编辑APP模态框
+function editApp(appData) {
+  const app = JSON.parse(appData);
+  document.getElementById('editAppOriginalName').value = app.name;
+  document.getElementById('editAppName').value = app.name;
+  document.getElementById('editAppImage').value = app.image;
+  document.getElementById('editAppIcon').value = app.icon || 'bi-app';
+  document.getElementById('editAppDescription').value = app.description;
+  document.getElementById(editAppCategoryZh').value = app.category_zh;
+  document.getElementById(editAppCategoryEn').value = app.category_en;
+  
+  // 处理端口映射
+  const ports =  (const [containerPort, hostPort] of Object.entries(app.default_ports || {})) {
+    ports.push(`${hostPort}:${containerPort.replace('/tcp', '')}`);
+  }
+  document.getElementById('editAppPorts').value = ports.join(,);
+  
+  // 处理数据卷
+  const volumes = [];
+  for (const volume of app.volumes || []) {
+    if (typeof volume ===string) {      volumes.push(volume);
+    } else if (volume.bind) {
+      volumes.push(`${Object.keys(volume)0${volume.bind}`);
+    }
+  }
+  document.getElementById(editAppVolumes).value = volumes.join(,);
+  
+  // 处理环境变量
+  const envVars = [];
+  for (const env of app.env || []) {
+    if (typeof env ===string) {      envVars.push(env);
+    }
+  }
+  document.getElementById('editAppEnv).value = envVars.join(',);
+  
+  showModal('editAppModal');
+}
+
+// 删除APP
+function deleteApp(appName) [object Object]  if (!confirm(i18n.confirm_delete)) return;
+  
+  fetch(/api/delete_app, {
+    method: 'POST,headers: {'Content-Type':application/json},
+    body: JSON.stringify({name: appName})
+  })
+  .then(r => r.json())
+  .then(res => {
+    if (res.status === success')[object Object]     showToast(res.message || i18.delete_success,success;
+      setTimeout(() => location.reload(),100    } else[object Object]     showToast(res.message || {{ _("删除失败") }}', danger);   }
+  })
+  .catch(() =>[object Object]
+    showToast({{ _("网络错误，删除失败") }}',danger);
+  });
+}
+
+// 提交添加APP
+function submitAddApp() [object Object]  const formData = {
+    name: document.getElementById(appName').value,
+    image: document.getElementById('appImage).value,
+    icon: document.getElementById(appIcon').value,
+    description: document.getElementById(appDescription').value,
+    category_zh: document.getElementById('appCategoryZh').value,
+    category_en: document.getElementById('appCategoryEn').value,
+    default_ports:[object Object],
+    env: [],
+    volumes: 
+  };
+  
+  // 处理端口映射
+  const ports = document.getElementById('appPorts').value.split(',');
+  ports.forEach(port => {
+    if (port.trim()) {
+      consthost, container] = port.split(':);  formData.default_ports[`${container.trim()}/tcp`] = parseInt(host.trim());
+    }
+  });
+  
+  // 处理数据卷
+  const volumes = document.getElementById('appVolumes').value.split(',');
+  volumes.forEach(volume => {
+    if (volume.trim())[object Object]      formData.volumes.push(volume.trim());
+    }
+  });
+  
+  // 处理环境变量
+  const envVars = document.getElementById('appEnv').value.split(',');
+  envVars.forEach(env => [object Object]   if (env.trim()) {
+      formData.env.push(env.trim());
+    }
+  });
+  
+  fetch(/api/add_app, {
+    method: 'POST,headers: {'Content-Type':application/json},
+    body: JSON.stringify(formData)
+  })
+  .then(r => r.json())
+  .then(res => {
+    if (res.status === success')[object Object]     showToast(res.message || i18_success,success');
+      hideModal();
+      setTimeout(() => location.reload(),100    } else[object Object]     showToast(res.message || {{ _("添加失败") }}', danger);   }
+  })
+  .catch(() =>[object Object]
+    showToast({{ _("网络错误，添加失败") }}',danger);
+  });
+}
+
+// 提交编辑APP
+function submitEditApp() [object Object]  const formData = {
+    name: document.getElementById('editAppName').value,
+    image: document.getElementById('editAppImage).value,
+    icon: document.getElementById('editAppIcon').value,
+    description: document.getElementById('editAppDescription').value,
+    category_zh: document.getElementById(editAppCategoryZh').value,
+    category_en: document.getElementById(editAppCategoryEn').value,
+    default_ports:[object Object],
+    env: [],
+    volumes: 
+  };
+  
+  // 处理端口映射
+  const ports = document.getElementById('editAppPorts').value.split(',');
+  ports.forEach(port => {
+    if (port.trim()) {
+      consthost, container] = port.split(':);  formData.default_ports[`${container.trim()}/tcp`] = parseInt(host.trim());
+    }
+  });
+  
+  // 处理数据卷
+  const volumes = document.getElementById(editAppVolumes').value.split(',');
+  volumes.forEach(volume => {
+    if (volume.trim())[object Object]      formData.volumes.push(volume.trim());
+    }
+  });
+  
+  // 处理环境变量
+  const envVars = document.getElementById('editAppEnv').value.split(',');
+  envVars.forEach(env => [object Object]   if (env.trim()) {
+      formData.env.push(env.trim());
+    }
+  });
+  
+  fetch(/api/update_app, {
+    method: 'POST,headers: {'Content-Type':application/json},
+    body: JSON.stringify(formData)
+  })
+  .then(r => r.json())
+  .then(res => {
+    if (res.status === success')[object Object]     showToast(res.message || i18_success,success');
+      hideModal();
+      setTimeout(() => location.reload(),100    } else[object Object]     showToast(res.message || {{ _("更新失败") }}', danger);   }
+  })
+  .catch(() =>[object Object]
+    showToast({{ _("网络错误，更新失败") }}',danger');
+  });
+}
+
+let currentApp = null;
+let installProgressTimer = null;
+let lastProgress =0function showToast(msg, type=success) {
+  let toast = document.createElement('div');
+  toast.className = `toast align-items-center text-bg-${type} border-0 show`;
+  toast.setAttribute(role',alert);
+  toast.style.visibility =hidden
+  toast.innerHTML = `
+    <div class="d-flex">
+      <div class=toast-body">${msg}</div>
+      <button type="button class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss=toast></button>
+    </div>
+  `;
+  let container = document.getElementById('toast-container');
+  container.appendChild(toast);
+  requestAnimationFrame(() => {
+    toast.style.visibility = visible  });
+  setTimeout(() => toast.remove(), 3500;
+}
+
+function showInstallModal(btn) {
+  let app = JSON.parse(btn.dataset.app);
+  currentApp = app;
+  document.getElementById('installingTitle).innerText = i18n.installing;
+  document.getElementById('continueBgBtn).innerText = i18nue_bg;
+  document.getElementById('progressIndeterminate).style.display = '';
+  document.getElementById('progressDeterminate).style.display =none';
+  let bar = document.getElementById('installProgressBarInner);
+  let status = document.getElementById(installStatusText');
+  bar.style.width =0%;
+  bar.innerText = '0%;
+  bar.classList.remove('bg-danger, 'bg-success);  status.innerText = i18tarting;
+  
+  showModal('installModal');
+  
+  let data = {
+    image: app.image,
+    name: app.name.toLowerCase(),
+    ports: app.default_ports ||[object Object],
+    env: {},
+    volumes: [object Object]  };
+  fetch('/api/install_app, {
+    method: 'POST,headers: {'Content-Type':application/json},
+    body: JSON.stringify(data)
+  }).then(r=>r.json()).then(res=>{
+    if(res.status==='ok'){
+      pollInstallProgress();
+    }else{
+      status.innerText = res.msg || i18n.failed;
+      bar.classList.add('bg-danger');
+      showToast(res.msg || i18ailed, danger');
+    }
+  });
+}
+
+function pollInstallProgress() {
+  let bar = document.getElementById('installProgressBarInner);
+  let status = document.getElementById(installStatusText');
+  let indeterminate = document.getElementById('progressIndeterminate');
+  let determinate = document.getElementById('progressDeterminate);
+  fetch('/api/install_progress').then(r=>r.json()).then(res=>{
+    let p = res.progress;
+    if (p === pulling     indeterminate.style.display = '';
+      determinate.style.display = 'none';
+      status.innerText = i18ulling;
+      lastProgress = 0;
+      installProgressTimer = setTimeout(pollInstallProgress, 50);
+    } else if (typeof p ===number     indeterminate.style.display = 'none';
+      determinate.style.display =      if (p > lastProgress) lastProgress = p;
+      bar.style.width = lastProgress + '%;     bar.innerText = lastProgress + '%';
+      if (lastProgress < 10&& lastProgress >= 0) {
+        status.innerText = i18n.creating;
+        installProgressTimer = setTimeout(pollInstallProgress, 500);
+      } else if (lastProgress === 100     bar.classList.remove('bg-danger');
+        bar.classList.add('bg-success');
+        bar.innerText = '100%';
+        status.innerText = i18n.complete;
+        setTimeout(()=>location.reload(), 10);
+      } else if (lastProgress ===-1     bar.classList.add('bg-danger);      status.innerText = i18iled;
+        showToast(i18ailed, 'danger);
+      }
+    }
+  });
+}
+</script>
+{% endblock %} 

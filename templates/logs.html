@@ -1,0 +1,7 @@
+{% extends 'base.html' %}
+{% block title %}{{ _('日志') }}{% endblock %}
+{% block content %}
+<h2>{{ _('容器日志') }}: {{ container.name }}</h2>
+<pre style="background:#222;color:#eee;padding:1em;max-height:500px;overflow:auto;">{{ logs }}</pre>
+<a href="/" class="btn btn-secondary">{{ _('返回') }}</a>
+{% endblock %} 
